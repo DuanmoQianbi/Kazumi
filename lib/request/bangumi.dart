@@ -333,3 +333,30 @@ class BangumiHTTP {
     return characterFullItem;
   }
 }
+
+import 'package:kazumi/utils/bgm_auth.dart';
+import 'package:dio/dio.dart';
+
+Future<bool> updateBgmProgress(int subjectId, int epId) async {
+  if (!BgmAuth.isLogin) return false;
+
+  try {
+    final dio = Dio();
+    await dio.post(
+      'https://api.bgm.tv/v0/users/-/collections/$subjectId/episodes',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer ${BgmAuth.accessToken}',
+          'Content-Type': 'application/json',
+        },
+      ),
+      data: {
+        'type': 2,
+        'episode_id': epId,
+      },
+    );
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
