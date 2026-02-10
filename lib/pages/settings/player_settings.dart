@@ -403,7 +403,17 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                   description: Text('顶栏跳过按钮的秒数', style: TextStyle(fontFamily: fontFamily)),
                   value: Text('$playerButtonSkipTime 秒', style: TextStyle(fontFamily: fontFamily)),
                 ),
-                // 原有：默认视频比例设置项
+                SettingsTile.navigation(
+                  onPressed: (_) async {
+                    if (playerAspectRatioMenuController.isOpen) {
+                      playerAspectRatioMenuController.close();
+                    } else {
+                      playerAspectRatioMenuController.open();
+                    }
+                  },
+                  title: Text('默认视频比例', style: TextStyle(fontFamily: fontFamily)),
+                  value: MenuAnchor(
+                          // 有：默认视频比例设置项
 SettingsTile.navigation(
   onPressed: (_) async {
     if (playerAspectRatioMenuController.isOpen) {
@@ -488,16 +498,6 @@ SettingsTile.navigation(
   ),
 ),
 
-                SettingsTile.navigation(
-                  onPressed: (_) async {
-                    if (playerAspectRatioMenuController.isOpen) {
-                      playerAspectRatioMenuController.close();
-                    } else {
-                      playerAspectRatioMenuController.open();
-                    }
-                  },
-                  title: Text('默认视频比例', style: TextStyle(fontFamily: fontFamily)),
-                  value: MenuAnchor(
                     consumeOutsideTap: true,
                     controller: playerAspectRatioMenuController,
                     builder: (_, __, ___) {
