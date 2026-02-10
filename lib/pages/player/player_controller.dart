@@ -294,6 +294,21 @@ abstract class _PlayerController with Store {
       }
     }
   }
+  // --------------- 新增：同步到Bangumi的代码 ---------------
+import 'package:kazumi/request/bangumi.dart';
+import 'package:kazumi/utils/bgm_auth.dart';
+
+// 监听播放器状态变化，播放完成后同步
+mediaPlayer!.stream.state.listen((state) {
+  if (state.completed && !completed) { // 播放完成且未同步过
+    completed = true;
+    if (BgmAuth.isLogin) {
+      updateBgmProgress(bangumiId, currentEpisode); // 用现有变量同步
+    }
+  }
+});
+// --------------- 新增代码结束 ---------------
+
 
   Future<void> setupPlayerDebugInfoSubscription() async {
     await playerLogSubscription?.cancel();
