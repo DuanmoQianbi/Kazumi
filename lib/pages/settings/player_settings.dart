@@ -403,6 +403,91 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                   description: Text('顶栏跳过按钮的秒数', style: TextStyle(fontFamily: fontFamily)),
                   value: Text('$playerButtonSkipTime 秒', style: TextStyle(fontFamily: fontFamily)),
                 ),
+                // 原有：默认视频比例设置项
+SettingsTile.navigation(
+  onPressed: (_) async {
+    if (playerAspectRatioMenuController.isOpen) {
+      playerAspectRatioMenuController.close();
+    } else {
+      playerAspectRatioMenuController.open();
+    }
+  },
+  title: Text('默认视频比例', style: TextStyle(fontFamily: fontFamily)),
+  value: MenuAnchor(
+    consumeOutsideTap: true,
+    controller: playerAspectRatioMenuController,
+    builder: (_, __, ___) {
+      return Text(
+        aspectRatioTypeMap[defaultAspectRatioType] ?? '自动',
+        style: TextStyle(fontFamily: fontFamily),
+      );
+    },
+    menuChildren: [
+      for (final entry in aspectRatioTypeMap.entries)
+        MenuItemButton(
+          requestFocusOnHover: false,
+          onPressed: () => updateDefaultAspectRatioType(entry.key),
+          child: Container(
+            height: 48,
+            constraints: BoxConstraints(minWidth: 112),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                entry.value,
+                style: TextStyle(
+                  color: entry.key == defaultAspectRatioType
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  fontFamily: fontFamily,
+                ),
+              ),
+            ),
+          ),
+        ),
+    ],
+  ),
+),
+// --------------- 新增：Bangumi账号同步（直接粘贴这里）---------------
+SettingsTile.navigation(
+  onPressed: (_) async {
+    String? bangumiToken;
+    final TextEditingController _tokenController = TextEditingController();
+    await KazumiDialog.show<String>(builder: (context) {
+      return AlertDialog(
+        title: Text('输入Bangumi AccessToken', style: TextStyle(fontFamily: fontFamily)),
+        content: TextField(
+          controller: _tokenController,
+          decoration: InputDecoration(hintText: '请粘贴你的Bangumi Token'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => KazumiDialog.dismiss(),
+            child: Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              bangumiToken = _tokenController.text.trim();
+              if (bangumiToken?.isEmpty ?? true) {
+                KazumiDialog.showToast(message: '请输入Token');
+                return;
+              }
+              BgmAuth.accessToken = bangumiToken!;
+              KazumiDialog.dismiss();
+              KazumiDialog.showToast(message: '登录成功');
+            },
+            child: Text('确认'),
+          ),
+        ],
+      );
+    });
+  },
+  title: Text('Bangumi 账号同步', style: TextStyle(fontFamily: fontFamily)),
+  description: Text(
+    BgmAuth.isLogin ? '已登录' : '未登录',
+    style: TextStyle(fontFamily: fontFamily),
+  ),
+),
+
                 SettingsTile.navigation(
                   onPressed: (_) async {
                     if (playerAspectRatioMenuController.isOpen) {
